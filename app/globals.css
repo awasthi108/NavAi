@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navai-bg: #020617;
+  --navai-fg: #e5e7eb;
+  --navai-muted: rgba(229, 231, 235, 0.72);
+  --navai-panel: rgba(2, 6, 23, 0.62);
+  --navai-panel-strong: rgba(2, 6, 23, 0.82);
+  --navai-border: rgba(148, 163, 184, 0.16);
+  --navai-cyan: #22d3ee;
+  --navai-glow: rgba(34, 211, 238, 0.28);
+  --navai-glow-strong: rgba(34, 211, 238, 0.45);
+  --navai-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  --navai-shadow-soft: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --radius-xl: 20px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--navai-bg);
+  --color-foreground: var(--navai-fg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(1200px 700px at 16% -10%, rgba(34, 211, 238, 0.14), transparent 62%),
+    radial-gradient(900px 540px at 72% 10%, rgba(59, 130, 246, 0.12), transparent 60%),
+    radial-gradient(1200px 900px at 42% 120%, rgba(2, 132, 199, 0.12), transparent 60%),
+    linear-gradient(180deg, #000000 0%, var(--navai-bg) 18%, #000000 100%);
+  color: var(--navai-fg);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.22);
+}
+
+@layer utilities {
+  .navai-grid {
+    background-image: linear-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -8px -8px;
+    mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 86%);
+  }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(2, 6, 23, 0.58), rgba(2, 6, 23, 0.40));
+    border: 1px solid var(--navai-border);
+    box-shadow: var(--navai-shadow-soft);
+    backdrop-filter: blur(18px);
+  }
+
+  .glass-strong {
+    background: linear-gradient(180deg, rgba(2, 6, 23, 0.84), rgba(2, 6, 23, 0.62));
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: var(--navai-shadow);
+    backdrop-filter: blur(20px);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.18), 0 0 32px rgba(34, 211, 238, 0.14),
+      0 0 82px rgba(34, 211, 238, 0.08);
+  }
+
+  .text-muted {
+    color: var(--navai-muted);
+  }
+
+  .ring-cyan {
+    outline: 0;
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.24), 0 0 0 4px rgba(34, 211, 238, 0.12);
+  }
 }

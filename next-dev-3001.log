@@ -1,0 +1,9 @@
+
+> navai-dashboard@0.1.0 dev
+> next dev --port 3001
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://10.104.243.178:3001
+✓ Ready in 933ms
+[?25h

@@ -1,0 +1,8 @@
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          2468
+- Dir:          E:\tryy\p1 capstone\navai-dashboard
+- Log:          .next\dev\logs\next-development.log
+
+Run taskkill /PID 2468 /F to stop it.
