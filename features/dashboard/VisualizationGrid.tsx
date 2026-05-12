@@ -1,14 +1,11 @@
 "use client";
 
 import { GlassCard } from "@/components/ui/GlassCard";
-import { SegmentedTabs } from "@/components/ui/SegmentedTabs";
 import { ErrorChart } from "@/features/dashboard/ErrorChart";
 import { EarthScene } from "@/features/dashboard/EarthScene";
-import { SketchfabEmbed } from "@/features/dashboard/SketchfabEmbed";
 import type { DashboardControls } from "@/features/dashboard/types";
 import { cn } from "@/lib/cn";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
 
 type VisualizationGridProps = {
   controls: DashboardControls;
@@ -25,8 +22,6 @@ export function VisualizationGrid({
   anomalyDetected,
   className,
 }: VisualizationGridProps) {
-  const [view, setView] = useState<"r3f" | "sketchfab-earth" | "sketchfab-launch">("r3f");
-
   return (
     <div className={cn("grid grid-cols-1 gap-4 lg:grid-cols-2", className)}>
       <GlassCard className="p-5">
@@ -66,17 +61,10 @@ export function VisualizationGrid({
             <div className="mt-1 text-sm font-semibold tracking-tight text-slate-50">
               3D Earth & satellite visualization
             </div>
-            <div className="mt-1 text-xs text-muted">R3F scene + optional Sketchfab embed view.</div>
+            <div className="mt-1 text-xs text-muted">
+              Live GNSS constellation scene with synchronized telemetry.
+            </div>
           </div>
-          <SegmentedTabs
-            value={view}
-            onChange={setView}
-            tabs={[
-              { id: "r3f", label: "NavAI Earth" },
-              { id: "sketchfab-earth", label: "Sketchfab Earth" },
-              { id: "sketchfab-launch", label: "Launch" },
-            ]}
-          />
         </div>
 
         <div className="mt-4 overflow-hidden rounded-[18px] border border-[rgba(148,163,184,0.14)] bg-[rgba(2,6,23,0.46)]">
@@ -84,40 +72,20 @@ export function VisualizationGrid({
             <div className="pointer-events-none absolute inset-0 navai-grid opacity-[0.20]" />
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
-                key={view}
+                key="navai-earth"
                 className="absolute inset-0"
                 initial={{ opacity: 0, scale: 0.992 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.992 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               >
-                {view === "r3f" ? (
-                  <EarthScene isRunning={!!isRunning} anomalyDetected={!!anomalyDetected} />
-                ) : view === "sketchfab-earth" ? (
-                  <div className="h-full p-3">
-                    <SketchfabEmbed
-                      title="LEGO Animated Saturn V Apollo 11 Rocket launch"
-                      modelId="6d25ada102844d81b0b9b4149f720531"
-                      className="h-full"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-full p-3">
-                    <SketchfabEmbed
-                      title="Rocket animation"
-                      modelId="f6a9a9be9605457cbdc00ac6914ff783"
-                      className="h-full"
-                    />
-                  </div>
-                )}
+                <EarthScene isRunning={!!isRunning} anomalyDetected={!!anomalyDetected} />
               </motion.div>
             </AnimatePresence>
 
             <div className="pointer-events-none absolute bottom-4 left-4 right-4 flex items-center justify-between gap-4 text-xs text-muted">
-              <span>{view === "r3f" ? "Orbit: 1.66 R⊕" : "External: Sketchfab"}</span>
-              <span className="text-cyan-200/85">
-                {view === "r3f" ? "GNSS constellation overlay" : "XR-ready embed"}
-              </span>
+              <span>Orbit: 1.66 R_E</span>
+              <span className="text-cyan-200/85">GNSS constellation overlay</span>
               <span>{anomalyDetected ? "Integrity: Anomaly" : isRunning ? "Prediction: Active" : "Integrity: Nominal"}</span>
             </div>
           </div>

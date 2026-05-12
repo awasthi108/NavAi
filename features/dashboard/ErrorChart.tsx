@@ -32,18 +32,33 @@ type Datum = {
 
 const HISTORY_POINTS = 120; // 2 minutes at 1 Hz
 const FUTURE_POINTS = 90; // predicted extension
-const BASE_TIMESTAMP = Date.UTC(2026, 0, 1, 0, 0, 0);
+const IST_TIME_FORMATTER = new Intl.DateTimeFormat("en-IN", {
+  timeZone: "Asia/Kolkata",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false,
+});
 
 export const ErrorChart = memo(function ErrorChart({ controls, runNonce, className }: ErrorChartProps) {
   const seed = useMemo(() => makeSeed(controls, runNonce), [controls, runNonce]);
+  const [anchorMs, setAnchorMs] = useState<number | null>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setAnchorMs(Date.now()));
+    return () => cancelAnimationFrame(frame);
+  }, [seed]);
 
   const base = useMemo(() => {
+    if (anchorMs === null) return [];
+
     return generateSeries({
       seed,
       historyPoints: HISTORY_POINTS,
       futurePoints: FUTURE_POINTS,
+      anchorMs,
     });
-  }, [seed]);
+  }, [anchorMs, seed]);
 
   const [futureReveal, setFutureReveal] = useState({ runNonce, value: 0 });
   const [isMounted, setIsMounted] = useState(false);
@@ -89,6 +104,7 @@ export const ErrorChart = memo(function ErrorChart({ controls, runNonce, classNa
       if (typeof d.actual === "number") values.push(d.actual);
       if (typeof d.predicted === "number") values.push(d.predicted);
     }
+    if (values.length === 0) return [-1, 1] as const;
     const min = Math.min(...values);
     const max = Math.max(...values);
     const pad = Math.max(0.02, (max - min) * 0.18);
@@ -362,10 +378,12 @@ function generateSeries({
   seed,
   historyPoints,
   futurePoints,
+  anchorMs,
 }: {
   seed: number;
   historyPoints: number;
   futurePoints: number;
+  anchorMs: number;
 }): Datum[] {
   const rng = mulberry32(seed);
 
@@ -382,7 +400,7 @@ function generateSeries({
   const phase = rng() * Math.PI * 2;
   const freq = 0.085 + rng() * 0.03;
 
-  const start = BASE_TIMESTAMP + (seed % 86400) * 1000 - historyPoints * 1000;
+  const start = anchorMs - historyPoints * 1000;
   const total = historyPoints + futurePoints;
 
   const series: Datum[] = [];
@@ -432,8 +450,7 @@ function generateSeries({
     const predictedVisible = i < historyPoints - 16 ? null : predicted;
 
     const timeMs = start + i * 1000;
-    const ts = new Date(timeMs);
-    const tsLabel = ts.toISOString().slice(11, 19); // HH:MM:SS
+    const tsLabel = formatIstTime(timeMs);
 
     series.push({
       t,
@@ -449,7 +466,11 @@ function generateSeries({
 }
 
 function formatTooltipTime(timeMs: number) {
-  return `${new Date(timeMs).toISOString().slice(11, 19)} UTC`;
+  return `${formatIstTime(timeMs)} IST`;
+}
+
+function formatIstTime(timeMs: number) {
+  return IST_TIME_FORMATTER.format(new Date(timeMs));
 }
 
 function quantize(value: number, step: number) {

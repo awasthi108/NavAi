@@ -8,7 +8,7 @@ type TopHeaderProps = {
 };
 
 export function TopHeader({ className }: TopHeaderProps) {
-  const { formatted } = useNow({ timeZone: "UTC" });
+  const { formatted } = useNow({ timeZoneLabel: "" });
 
   return (
     <header
@@ -42,7 +42,7 @@ export function TopHeader({ className }: TopHeaderProps) {
           </div>
 
           <div className="rounded-xl border border-[rgba(148,163,184,0.16)] bg-[rgba(2,6,23,0.48)] px-3 py-2 text-xs text-slate-200/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-            <span className="text-muted">UTC</span>{" "}
+            <span className="text-muted">IST</span>{" "}
             <span className="font-semibold tracking-tight text-slate-50">{formatted}</span>
           </div>
         </div>
@@ -50,4 +50,3 @@ export function TopHeader({ className }: TopHeaderProps) {
     </header>
   );
 }
-

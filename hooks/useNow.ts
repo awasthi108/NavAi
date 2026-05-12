@@ -6,15 +6,21 @@ type UseNowOptions = {
   intervalMs?: number;
   timeZone?: string;
   locale?: string;
+  timeZoneLabel?: string;
 };
 
 export function useNow(options: UseNowOptions = {}) {
-  const { intervalMs = 1000, timeZone = "UTC", locale = "en-US" } = options;
+  const { intervalMs = 1000, timeZone = "Asia/Kolkata", locale = "en-IN", timeZoneLabel = "IST" } = options;
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), intervalMs);
-    return () => window.clearInterval(id);
+    const tick = () => setNow(new Date());
+    const initialId = window.setTimeout(tick, 0);
+    const intervalId = window.setInterval(tick, intervalMs);
+    return () => {
+      window.clearTimeout(initialId);
+      window.clearInterval(intervalId);
+    };
   }, [intervalMs]);
 
   const formatted = useMemo(() => {
@@ -31,10 +37,10 @@ export function useNow(options: UseNowOptions = {}) {
       minute: "2-digit",
       second: "2-digit",
       hour12: false,
-      timeZoneName: "short",
     });
-    return df.format(now);
-  }, [locale, now, timeZone]);
+    const suffix = timeZoneLabel ? ` ${timeZoneLabel}` : "";
+    return `${df.format(now)}${suffix}`;
+  }, [locale, now, timeZone, timeZoneLabel]);
 
   return { now, formatted };
 }

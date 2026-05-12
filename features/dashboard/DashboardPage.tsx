@@ -18,7 +18,7 @@ export function DashboardPage() {
 
 function DashboardPageInner() {
   const { controls, isLoading, isPredicting, runCompletedId } = useDashboard();
-  const { formatted } = useNow({ timeZone: "UTC" });
+  const { formatted } = useNow();
 
   const metrics = useMemo(() => {
     // Update metrics only when a run completes (keeps everything feeling synchronized).
